@@ -1,0 +1,69 @@
+@page "/students/update/{studentId}"
+@using Lab6.Data
+@using Lab6.Models
+
+@inject StudentService studentService
+@inject NavigationManager NavigationManager
+
+<h1>Update Student</h1>
+
+<p>This component demonstrates updating a student.</p>
+
+<input type="hidden" @bind="@studentId" /><br />
+
+<label for="firstName">First Name</label>
+<input id="firstName" placeholder="First Name" @bind="@firstName" /><br />
+
+<label for="lastName">Last Name</label>
+<input id="lastName" placeholder="Last Name" @bind="@lastName" /><br />
+
+<label for="school">School</label>
+<input id="school" placeholder="School" @bind="@school" /><br />
+
+<button @onclick="@Update" class="btn btn-primary">Update</button>
+
+@code {
+    [Parameter]
+    public string studentId {get; set;}
+    string firstName;
+    string lastName;
+    string school;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await load();
+    }
+
+    protected async Task load()
+    {
+        Student student = await studentService.GetStudentByIdAsync(studentId);
+        firstName = student.FirstName;
+        lastName = student.LastName;
+        school = student.School;
+    }
+
+    protected async Task Update()
+    {
+
+        Student s = new Student()
+        {
+            StudentId = studentId,
+            FirstName = firstName,
+            LastName = lastName,
+            School = school
+        };
+
+        await studentService.UpdateStudentAsync(studentId, s);
+        ClearFields();
+        NavigationManager.NavigateTo("/students");
+    }
+
+    protected void ClearFields()
+    {
+        studentId = string.Empty;
+        firstName = string.Empty;
+        lastName = string.Empty;
+        school = string.Empty;
+    }
+
+}

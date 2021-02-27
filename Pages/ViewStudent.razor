@@ -1,0 +1,43 @@
+@page "/students/view/{studentId}"
+@using Lab6.Data
+@using Lab6.Models
+
+@inject StudentService studentService
+
+<h1>View Student</h1>
+
+<p>This component demonstrates viewing a student.</p>
+
+<label for="studentId">Student ID</label>
+<input id="studentId" placeholder="Student ID" @bind="@studentId" disabled /><br />
+
+<label for="firstName">First Name</label>
+<input id="firstName" placeholder="First Name" @bind="@firstName" disabled /><br />
+
+<label for="lastName">Last Name</label>
+<input id="lastName" placeholder="Last Name" @bind="@lastName" disabled /><br />
+
+<label for="school">School</label>
+<input id="school" placeholder="School" @bind="@school" disabled /><br />
+
+@code {
+    [Parameter]
+    public string studentId {get; set;}
+    string firstName;
+    string lastName;
+    string school;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await load();
+    }
+
+    protected async Task load()
+    {
+        Student student = await studentService.GetStudentByIdAsync(studentId);
+        firstName = student.FirstName;
+        lastName = student.LastName;
+        school = student.School;
+    }
+
+}

@@ -1,0 +1,73 @@
+@page "/students"
+@using Lab6.Data
+@using Lab6.Models
+@inject StudentService studentService
+@inject NavigationManager NavigationManager
+<h1>Students</h1>
+
+<p>This component demonstrates managing students data.</p>
+
+@if (students == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class='table table-hover'>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>School</th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in students)
+            {
+                <tr>
+                    <td>@item.StudentId</td>
+                    <td>@item.FirstName</td>
+                    <td>@item.LastName</td>
+                    <td>@item.School</td>
+                    <td><button @onclick="() => PrepareView(item)" class="btn btn-primary">View</button></td>
+                    <td><button @onclick="() => PrepareUpdate(item)" class="btn btn-secondary">Update</button></td>
+                    <td><button @onclick="() => Delete(item)" class="btn btn-danger">Delete</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    List<Student> students;
+    protected override async Task OnInitializedAsync()
+    {
+        await load();
+    }
+
+    protected async Task load()
+    {
+        students = await studentService.GetStudentsAsync();
+    }
+
+    protected async Task Delete(Student student)
+    {
+        await studentService.DeleteStudentAsync(student.StudentId);
+        await load();
+    }
+
+    protected void PrepareUpdate(Student student)
+    {
+        NavigationManager.NavigateTo($"/students/update/{student.StudentId}");
+    }
+
+        protected void PrepareView(Student student)
+    {
+        NavigationManager.NavigateTo($"/students/view/{student.StudentId}");
+    }
+}

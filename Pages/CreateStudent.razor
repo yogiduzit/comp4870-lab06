@@ -1,0 +1,56 @@
+@page "/students/create"
+@using Lab6.Data
+@using Lab6.Models
+
+@inject StudentService studentService
+@inject NavigationManager NavigationManager
+
+<h1>Create Student</h1>
+
+<p>This component demonstrates inserting a new student.</p>
+
+
+<label for="firstName">First Name</label>
+<input id="firstName" placeholder="First Name" @bind="@firstName" /><br />
+
+<label for="lastName">Last Name</label>
+<input id="lastName" placeholder="Last Name" @bind="@lastName"/><br />
+
+<label for="school">School</label>
+<input id="school" placeholder="School" @bind="@school" /><br />
+
+<button @onclick="@Insert" class="btn btn-warning">Insert</button>
+
+
+
+@code {
+    string studentId;
+    string firstName;
+    string lastName;
+    string school;
+
+    protected async Task Insert()
+    {
+
+        Student s = new Student()
+        {
+            StudentId = Guid.NewGuid().ToString(),
+            FirstName = firstName,
+            LastName = lastName,
+            School = school
+        };
+
+        await studentService.InsertStudentAsync(s);
+        ClearFields();
+        NavigationManager.NavigateTo("/students");
+    }
+
+    protected void ClearFields()
+    {
+        studentId = string.Empty;
+        firstName = string.Empty;
+        lastName = string.Empty;
+        school = string.Empty;
+    }
+
+}
